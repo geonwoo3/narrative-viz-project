@@ -1,6 +1,75 @@
 <!DOCTYPE html>
 <html>
+<script src='http://d3js.org/ds.v5.min.js'></script>
+
+
+<title> CS 416 Narrative Visualization Project </title>
+<h1> Global Warming Analysis </h1>
+
+
+
+
+<p class="Region">Statistics</p>
+<style>
+    rect {fill: antiquewhite; stroke:white; }
+    p.Region { position: absolute; left: 5px; top: 250px; }
+    select { position: absolute; left: 5px; top: 290px; }
+    div.slide { position: absolute; left: 5px; top: 220px; }
+</style>
+<select id="Region"></select>
+
+<div class="slide">
+    <a href="hound.html"><button type= "button">next</button> </a>
+</div>
+
+
+
+<p>Click on the image to start exploring!</p>>
+<a href="main.html">
+    <img
+    src = data/A_large_blank_world_map_with_oceans_marked_in_blue.png;
+    alt = "the picture"/>
+</a>
+
+
+
+
 <body>
-<h1> CS 416 Narrative Visualization Project </h1>
+
+<svg width = 10000 height = 1500></svg>
+
+
+
+<script>
+
+async function init() {
+
+    
+    const globalTempAnnual = await d3.csv("data/global-temp-annual_csv.csv")
+    
+    var x = d3.scaleBand().rangeRound([1880, 2014]).domain(globalTempAnnual.map(function(d) { return d.Year; }))
+    var y = d3.scaleLinear().range([5,-5]).domain([0, 200]);
+    var h = d3.scaleLinear().domain([0, 200]).range([0,500]);
+    var w = x.bandwidth();
+
+
+
+
+    var tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("style", "absolute")
+                    .style("z-index", 10)
+                    .style("visibility", "hidden")
+                    .text("Simple test");
+    
+
+
+
+}
+init()
+
+</script>
+
+
 </body>
 </html>

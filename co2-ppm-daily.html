@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<script src='http://d3js.org/ds.v5.min.js'></script>
+
+
+
+<title> CS 416 Narrative Visualization Project </title>
+<h1> Global Warming Analysis </h1>
+
+
+
+<div>
+    <div id = "chart1"></div>
+    <div id = "chart2"></div>
+    <div id = "chart3"></div>
+</div>>
+
+
+
+<p class="stats">Statistics</p>
+<style>
+    rect {fill: antiquewhite; strock: white; }
+    p.stats { position: absolute; left: 5px; top: 250px; }
+    select { position: absolute; left: 5px; top: 290px; }
+    div.slide { position: absolute; left: 5px; top: 220px; }
+</style>
+<select id="stats"></select>
+
+<div class="slide">
+    <a href="hound.html"><button type= "button">next</button> </a>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<body>
+
+<svg width = 10000 height = 1500></svg>
+
+
+
+<script>
+
+async function init() {
+
+    const fossilFuelEmission = await d3.csv("data/fossil-fuel-co2-emissions-by-nation_csv.csv")
+    const globalTemp5yr = await d3.csv("data/global-temp-5yr_csv.csv")
+    const globalTempAnnual = await d3.csv("data/global-temp-annual_csv.csv")
+    const co2ppmDaily = await d3.csv("data/co2-ppm-daily_csv.csv")
+    const global = await d3.csv("data/global_csv.csv")
+    const wallpaper = await d3.csv("data/A_large_blank_world_map_with_oceans_marked_in_blue.png")
+
+
+    data = data.filter(function(d) { return d.Group1 == "Herding" });
+    var x = d3.scaleBand().rangeRound([0, 1000]).padding(.1).domain(data.map(function(d) { return d.BreedName; }))
+    var y = d3.scaleLinear().range([500,0]).domain([0, 200]);
+    var h = d3.scaleLinear().domain([0, 200]).range([0,500]);
+    var w = x.bandwidth();
+
+
+
+
+    var tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("style", "absolute")
+                    .style("z-index", 10)
+                    .style("visibility", "hidden")
+                    .text("Simple test");
+    
+
+    var stats = ['ppm', 'ppm2', 'ppm3']
+    d3.select('select')
+    .selectAll('groups')
+    .data(stats)
+    .enter()
+    .append('option')
+    .text(function (d) { return d; })
+    .property("selected", function (d) {return d === 'asdasdasd'})
+
+    d3.select("#stats")
+    .on("change", function() {
+        if (this.value === 'asd') {
+            weight(this.value)
+        } else if (this.value === 'asdas') {
+            intelligence(this.value)
+        } else {
+            popularity(this.value)
+        }
+    })
+
+
+    function weight(value) {
+    console.log(value);
+    d3.select('svg').selectAll("rect").remove()
+    d3.select('svg').selectAll('#barstat').remove();
+
+    bars
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr('transform','translate(175,75)')
+    .attr("x", function(d) { return x(d.BreedName); })
+    .attr('y',function(d) {return y(d.MaleWtKg);})
+    .attr("width", w)
+    .attr('height',function(d,i) {return h(d.MaleWtKg);})
+    .append('title')
+    .text(d => "Average Puppy Price: " + d.AverageBabyPrice +
+                "\nWorking Group: " + d.Group1 )
+        .on("mouseover", d => {tooltip.text(d.BreedName + " Average Puppy Price: " + d.AverageBabyPrice + "\nWorking Group: " + d.Group1); return tooltip.style("visibility", "visible")})
+        .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+        .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+    // stat on top of bar
+    svg
+        .append('g')
+        .selectAll('rect')
+        .data(data)
+        .enter()
+        .append('text')
+        .text(function(d) { return d.MaleWtKg})
+        .attr('id', 'barstat')
+        .attr('transform','translate(185,45)')
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr('x', function(d) { return x(d.BreedName); })
+        .attr('y', function(d) { return y(d.MaleWtKg); })
+        .attr('dy', '1.5em')
+};
+
+}
+init()
+
+</script>
+
+<button> chart1 </button>
+
+</body>
+</html>

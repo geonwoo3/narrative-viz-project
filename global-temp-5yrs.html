@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<script src='http://d3js.org/ds.v5.min.js'></script>
+
+
+<title> CS 416 Narrative Visualization Project </title>
+<h1> Global Warming Analysis </h1>
+
+
+
+
+<p class="Region">Statistics</p>
+<style>
+    rect {fill: antiquewhite; strock: white; }
+    p.Region { position: absolute; left: 5px; top: 250px; }
+    select { position: absolute; left: 5px; top: 290px; }
+    div.slide { position: absolute; left: 5px; top: 220px; }
+</style>
+<select id="Region"></select>
+
+<div class="slide">
+    <a href="hound.html"><button type= "button">next</button> </a>
+</div>
+
+
+
+
+
+
+<body>
+
+<svg width = 10000 height = 1500></svg>
+
+
+
+<script>
+
+async function init() {
+
+    
+    const globalTemp5yr = await d3.csv("data/global-temp-5yr_csv.csv")
+    
+    var x = d3.scaleBand().rangeRound([1880, 2014]).domain(globalTemp5yr.map(function(d) { return d.Year; }))
+    var y = d3.scaleLinear().range([5,-5]).domain([0, 200]);
+    var h = d3.scaleLinear().domain([0, 200]).range([0,500]);
+    var w = x.bandwidth();
+
+
+
+
+    var tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("style", "absolute")
+                    .style("z-index", 10)
+                    .style("visibility", "hidden")
+                    .text("Simple test");
+    
+
+    var Region = ['Land', 'Land and Ocean', 'North Hemisphere', 'South Hemisphere']
+    d3.select('select')
+    .selectAll('groups')
+    .data(Region)
+    .enter()
+    .append('option')
+    .text(function (d) { return d; })
+    .property("selected", function (d) {return d === 'asdasdasd'})
+
+    d3.select("#Region")
+    .on("change", function() {
+        if (this.value === 'Land') {
+            land(this.value)
+        } else if (this.value === 'Land and Ocean') {
+            landAndOcean(this.value)
+        } else if (this.value == 'North Hemisphere') {
+            nhem(this.value)
+        } else {
+            shem(this.value)
+        }
+    })
+
+    function land(value) {
+        console.log(value);
+        d3.select('svg').selectAll("rect").remove()
+        d3.select('svg').selectAll('#barstat').remove();
+
+        bars
+        .data(globalTemp5yr)
+        .enter()
+        .append("rect")
+        .attr('transform','translate(175,75)')
+        .attr("x", function(d) { return x(d.Year); })
+        .attr('y',function(d) {return y(d.Land);})
+        .attr("width", w)
+        .attr('height',function(d,i) {return h(d.Land);})
+        
+
+        svg
+            .append('g')
+            .selectAll('rect')
+            .data(globalTemp5yr)
+            .enter()
+            .append('text')
+            .text(function(d) { return d.Land})
+            .attr('id', 'barstat')
+            .attr('transform','translate(185,45)')
+            .attr("text-anchor", "middle")
+            .attr("fill", "black")
+            .attr('x', function(d) { return x(d.Year); })
+            .attr('y', function(d) { return y(d.Land); })
+            .attr('dy', '1.5em')
+    };
+
+    function landAndOcean(value) {
+        console.log(value);
+        d3.select('svg').selectAll("rect").remove()
+        d3.select('svg').selectAll('#barstat').remove();
+
+        bars
+        .data(globalTemp5yr)
+        .enter()
+        .append("rect")
+        .attr('transform','translate(175,75)')
+        .attr("x", function(d) { return x(d.Year); })
+        .attr('y',function(d) {return y(d.LandAndOcean);})
+        .attr("width", w)
+        .attr('height',function(d,i) {return h(d.LandAndOcean);})
+        .append('title')
+        .text(d => "Average Puppy Price: " + d.AverageBabyPrice +
+                    "\nWorking Group: " + d.Group1 )
+            .on("mouseover", d => {tooltip.text(d.BreedName + " Average Puppy Price: " + d.AverageBabyPrice + "\nWorking Group: " + d.Group1); return tooltip.style("visibility", "visible")})
+            .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+            .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+        svg
+            .append('g')
+            .selectAll('rect')
+            .data(globalTemp5yr)
+            .enter()
+            .append('text')
+            .text(function(d) { return d.LandAndOcean})
+            .attr('id', 'barstat')
+            .attr('transform','translate(185,45)')
+            .attr("text-anchor", "middle")
+            .attr("fill", "black")
+            .attr('x', function(d) { return x(d.Year); })
+            .attr('y', function(d) { return y(d.LandAndOcean); })
+            .attr('dy', '1.5em')
+    };
+
+    function nhem(value) {
+        console.log(value);
+        d3.select('svg').selectAll("rect").remove()
+        d3.select('svg').selectAll('#barstat').remove();
+
+        bars
+        .data(globalTemp5yr)
+        .enter()
+        .append("rect")
+        .attr('transform','translate(175,75)')
+        .attr("x", function(d) { return x(d.Year); })
+        .attr('y',function(d) {return y(d.NHem);})
+        .attr("width", w)
+        .attr('height',function(d,i) {return h(d.NHem);})
+        .append('title')
+        .text(d => "Average Puppy Price: " + d.AverageBabyPrice +
+                    "\nWorking Group: " + d.Group1 )
+            .on("mouseover", d => {tooltip.text(d.BreedName + " Average Puppy Price: " + d.AverageBabyPrice + "\nWorking Group: " + d.Group1); return tooltip.style("visibility", "visible")})
+            .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+            .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+        svg
+            .append('g')
+            .selectAll('rect')
+            .data(globalTemp5yr)
+            .enter()
+            .append('text')
+            .text(function(d) { return d.NHem})
+            .attr('id', 'barstat')
+            .attr('transform','translate(185,45)')
+            .attr("text-anchor", "middle")
+            .attr("fill", "black")
+            .attr('x', function(d) { return x(d.Year); })
+            .attr('y', function(d) { return y(d.NHem); })
+            .attr('dy', '1.5em')
+    };
+
+
+    function shem(value) {
+        console.log(value);
+        d3.select('svg').selectAll("rect").remove()
+        d3.select('svg').selectAll('#barstat').remove();
+
+        bars
+        .data(globalTemp5yr)
+        .enter()
+        .append("rect")
+        .attr('transform','translate(175,75)')
+        .attr("x", function(d) { return x(d.Year); })
+        .attr('y',function(d) {return y(d.SHem);})
+        .attr("width", w)
+        .attr('height',function(d,i) {return h(d.SHem);})
+        .append('title')
+        .text(d => "Average Puppy Price: " + d.AverageBabyPrice +
+                    "\nWorking Group: " + d.Group1 )
+            .on("mouseover", d => {tooltip.text(d.BreedName + " Average Puppy Price: " + d.AverageBabyPrice + "\nWorking Group: " + d.Group1); return tooltip.style("visibility", "visible")})
+            .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+            .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+        svg
+            .append('g')
+            .selectAll('rect')
+            .data(globalTemp5yr)
+            .enter()
+            .append('text')
+            .text(function(d) { return d.SHem})
+            .attr('id', 'barstat')
+            .attr('transform','translate(185,45)')
+            .attr("text-anchor", "middle")
+            .attr("fill", "black")
+            .attr('x', function(d) { return x(d.Year); })
+            .attr('y', function(d) { return y(d.SHem); })
+            .attr('dy', '1.5em')
+    };
+
+    svg
+        .append('g')
+        .selectAll('rect')
+        .data(data)
+        .enter()
+        .append('text')
+        .text(function(d) { return d.PopularityUS2017})
+        .attr('id', 'barstat')
+        .attr('transform','translate(185,45)')
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .attr('x', function(d) { return x(d.BreedName); })
+        .attr('y', function(d) { return y(d.PopularityUS2017); })
+        .attr('dy', '1.5em')
+
+    svg
+        .append('g')
+        .attr('transform','translate(175,75)')
+        .call(d3.axisLeft(y));
+    svg
+        .append('g')
+        .attr('transform','translate(175,575)')
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .attr("y", 0)
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .attr('transform','rotate(90)')
+        .style("text-anchor", "start");
+
+
+
+}
+init()
+
+</script>
+
+
+</body>
+</html>
